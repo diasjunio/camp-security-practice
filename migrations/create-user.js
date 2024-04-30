@@ -1,35 +1,20 @@
 // migrations/create-user.js
-const { DataTypes } = require('sequelize');
+const { QueryTypes } = require('sequelize');
 const sequelize = require('../sequelize');
 
 module.exports = {
-  up: async (queryInterface) => {
-    await queryInterface.createTable('users', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: DataTypes.INTEGER,
-      },
-      username: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
-      password: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
-      createdAt: {
-        allowNull: false,
-        type: DataTypes.DATE,
-      },
-      updatedAt: {
-        allowNull: false,
-        type: DataTypes.DATE,
-      },
-    });
+  up: async () => {
+    const usersData = [];
+    for (let i = 0; i < 10; i++) {
+      usersData.push({
+        username: `user${i}`,
+        password: `password${i}`,
+      });
+    }
+    await sequelize.models.User.bulkCreate(usersData);
   },
-  down: async (queryInterface) => {
-    await queryInterface.dropTable('users');
+
+  down: async () => {
+    await sequelize.query("DELETE FROM users", { type: QueryTypes.DELETE });
   },
 };
